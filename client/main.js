@@ -7,11 +7,48 @@ import { ReactiveVar } from 'meteor/reactive-var';
 
 Cards = new Mongo.Collection('cards');
 
+function createItem(event) {
+  var title = event.target.title.value;
+  var stack = Number(event.target.stack.value);
+  var order = Number(event.target.order.value);
+  var morality = event.target.morality.value;
+
+  Cards.insert({
+    title: title,
+    stack: stack,
+    order: order,
+    morality: morality,
+    served_count: 0,
+    correct_count: 0,
+    createdAt: new Date(),
+  });
+}
+
+function saveItem(event) {
+  var title = event.target.title.value;
+  var stack = Number(event.target.stack.value);
+  var order = Number(event.target.order.value);
+  var morality = event.target.morality.value;
+
+  var editItem = {
+    title: title,
+    stack: stack,
+    order: order,
+    morality: morality
+  }
+
+  Cards.update(Session.get('editItemId'), {$set: editItem});
+  Session.set('editItemId', null);
+}
+
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
-var stackNumber = getRandomInt(1, 1); // This needs to be modified to have a max value of the number of stacks present
+function generateStackNumber() {
+  Session.set('stackNumber', getRandomInt(1, 1)); // This needs to be modified to have a max value of the number of stacks present
+};
+
 var timeoutLength = 2500;
 
 function getStack(stackNumber) {
@@ -22,22 +59,19 @@ function getStack(stackNumber) {
 
 function getCurrentCard() {
   return Cards.find({
-    stack: stackNumber,
+    stack: Session.get('stackNumber'),
     order: Session.get('stackOrder')
   });
 };
 
 Template.game.onCreated(function setSessionVar() {
   Session.set('completedCards', 0);
+  generateStackNumber();
   Session.set('stackOrder', 1);
   Session.set('userScore', 0);
 });
 
 Template.game.helpers({
-  data: function() {
-    return getStack(stackNumber);
-  },
-
   served: function() {
     return getCurrentCard();
   },
@@ -106,6 +140,13 @@ function checkResponse(val) {
   }
 };
 
+function updateCardStats(event) {
+  // var stack =
+  var order = Session.get('stackOrder');
+
+  console.log(event);
+};
+
 function generateResults(score) {
   if (score == 0) {
     return "DESPICABLE";
@@ -144,6 +185,9 @@ Template.game.events({
     // See if the user got the prompt correct and increase score and show flash message
     checkResponse(event.target.value);
 
+    // Update the card stats
+    updateCardStats(event);
+
     // Increment question count by one
     var currentOrder = Session.get('stackOrder');
     var completedCards = Session.get('completedCards');
@@ -170,6 +214,7 @@ Template.game.events({
   'click .reset'(event, instance) {
     Session.set('userScore', 0);
     Session.set('completedCards', 0);
+    generateStackNumber();
     Session.set('stackOrder', 1);
     clearFlashMessages();
     $(".reset-button").hide();
@@ -207,40 +252,6 @@ Template.manage.events({
     return event.preventDefault();
   },
 });
-
-function createItem(event) {
-  var title = event.target.title.value;
-  var stack = Number(event.target.stack.value);
-  var order = Number(event.target.order.value);
-  var morality = event.target.morality.value;
-
-  Cards.insert({
-    title: title,
-    stack: stack,
-    order: order,
-    morality: morality,
-    createdAt: new Date(),
-  });
-}
-
-function saveItem(event) {
-  var title = event.target.title.value;
-  var stack = Number(event.target.stack.value);
-  var order = Number(event.target.order.value);
-  var morality = event.target.morality.value;
-
-  var editItem = {
-    title: title,
-    stack: stack,
-    order: order,
-    morality: morality
-  }
-
-  console.log(editItem);
-
-  Cards.update(Session.get('editItemId'), {$set: editItem});
-  Session.set('editItemId', null);
-}
 
 Template.card.events({
   'click .delete': function(event) {
