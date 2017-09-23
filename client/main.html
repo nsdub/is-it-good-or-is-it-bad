@@ -1,0 +1,293 @@
+<head>
+
+  <!-- Basic Page Needs
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta charset="utf-8">
+  <title>Is It Good or Is It Bad</title>
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!-- Mobile Specific Metas
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- FONT
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Josefin+Slab:400,400i|Playfair+Display:400i" rel="stylesheet">
+
+  <!-- Favicon
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <!-- <link rel="icon" type="image/png" href="images/favicon.png"> -->
+
+</head>
+
+<body>
+</body>
+
+<template name="main_layout">
+  <div class="container">
+    {{> yield}}
+  </div>
+</template>
+
+<template name="home">
+  <section class="header">
+    <h2 class="title">
+      Is It Good?
+      <p>- OR -</p>
+      Is It Bad?
+    </h2>
+   </section>
+  {{> game}}
+  <div class="links">
+    <div class="about-link">
+      <a href="/about">About</a>
+    </div>
+    {{#if currentUser}}
+      <div class="manager-link">
+        <a href="/manage">Go to Manage</a>
+      </div>
+    {{/if}}
+  </div>
+  {{> flash_messages}}
+</template>
+
+<template name="game">
+  <div class="game-container">
+    <div class="info-container">
+      <table class="prompt-box">
+        <tbody>
+          <tr class="prompt-row">
+            {{#each served}}
+              {{> prompt}}
+            {{/each}}
+            {{> results}}
+          </tr>
+          <tr class="metrics">
+            {{> metrics}}
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+    <div class="interaction-container">
+      {{> buttons}}
+    </div>
+  </div>
+</template>
+
+<template name="buttons">
+  <div class="morality-buttons">
+    <input type="submit" value="Good" class="left response" />
+    <input type="submit" value="Bad" class="right response" />
+    <div class="reset-button">
+      <button class="reset">Reset</button>
+    </div>
+    <div class="clear-floats"></div>
+  </div>
+</template>
+
+<template name="results">
+  <td class="results">
+    <h4>
+      The Internet deems you to be...
+    </h4>
+    <div id="judgment"></div>
+    {{> social}}
+  </td>
+
+</template>
+
+<template name="metrics">
+  <td class="counter left">
+    Question: {{counter}} of 5
+  </td>
+  <td class="score right">
+    Your Score: {{score}}
+  </td>
+    <!-- <div class="clear-floats"></div> -->
+</template>
+
+<template name="social">
+  <div class="social-buttons">
+    <a href="{{shareOnFacebookLink}}" target="_blank" class="btn btn-facebook">
+      <i class="fa fa-facebook"></i>
+    </a>
+    <a href="{{shareOnTwitterLink}}" target="_blank" class="btn btn-twitter">
+      <i class="fa fa-twitter"></i>
+    </a>
+    <a href="{{shareOnGooglePlusLink}}" target="_blank" class="btn btn-google-plus">
+      <i class="fa fa-google-plus"></i>
+    </a>
+  </div>
+</template>
+
+<template name="prompt">
+  <td class="prompt">
+    {{title}}
+    {{stack}}
+  </td>
+</template>
+
+
+<template name="manage">
+  <h1>Manage</h1>
+  {{> loginButtons}}
+
+  {{#if currentUser}}
+    {{> new_card_form}}
+    <div class="card-container">
+      <table class="u-full-width skeleton">
+        <thead>
+          <tr>
+            <td>
+              Content
+            </td>
+            <td>
+              Stack #
+            </td>
+            <td>
+              Order
+            </td>
+            <td>
+              Morality
+            </td>
+            <td>
+              <!-- Intentionally blank for edit column-->
+            </td>
+            <td>
+              <!-- Intentionally blank for delete column-->
+            </td>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each cards}}
+            {{> card}}
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+  {{/if}}
+  <div class="manager-link">
+    <a href="/">Go Home</a>
+  </div>
+</template>
+
+<template name="new_card_form">
+  <form class="new-card-form">
+    <textarea class="u-full-width" name="title" placeholder="Card content..."></textarea>
+    <select name="stack">
+      <option>Stack</option>
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+    </select>
+    <select name="order">
+      <option>Order</option>
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+    </select>
+    <select name="morality">
+      <option>Morality</option>
+      <option value="Good">Good</option>
+      <option value="Bad">Bad</option>
+    </select>
+    <br />
+    <input type="submit" value="Submit" />
+  </form>
+</template>
+
+<template name="edit_card_form">
+  <form method="GET" id="edit_card_form" class="edit-card-form"></form>
+  <tr>
+    <td>
+      <textarea form="edit_card_form" class="u-full-width" name="title" placeholder="Card content...">{{title}}</textarea>
+    </td>
+    <td>
+      <select form="edit_card_form" name="stack" value="{{stack}}">
+        <option>Stack</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+      </select>
+    </td>
+    <td>
+      <select form="edit_card_form" name="order" value="{{order}}">
+        <option>Order</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+      </select>
+    </td>
+    <td>
+      <select form="edit_card_form" name="morality" value="{{morality}}">
+        <option>Morality</option>
+        <option value="Good">Good</option>
+        <option value="Bad">Bad</option>
+      </select>
+    </td>
+    <td>
+      <input form="edit_card_form" class="saveItem" type="submit" value="Save" />
+    </td>
+    <td>
+      <input form="edit_card_form" class="cancelItem" type="button" value="Cancel" />
+    </td>
+  </tr>
+</template>
+
+<template name="card">
+  {{#if editing}}
+    {{> edit_card_form}}
+  {{else}}
+    {{> card_view_row}}
+  {{/if}}
+</template>
+
+<template name="card_view_row">
+  <tr>
+    <td>
+      {{title}}
+    </td>
+    <td>
+      {{stack}}
+    </td>
+    <td>
+      {{order}}
+    </td>
+    <td>
+      {{morality}}
+    </td>
+    <td>
+      <button class="editItem">Edit</button>
+    </td>
+    <td>
+      <button class="delete">X</button>
+    </td>
+  </tr>
+</template>
+
+<template name="about">
+  <h1>About page</h1>
+  <p>This is a giant about section explaining what this site is all about</p>
+</template>
+
+<template name="flash_messages">
+  <div class="response-feedback">
+    <div id="overlay">
+      <div id="overlay_text">
+        <h1>Overlay Text</h1>
+        <h4>Overlay subtext</h4>
+      </div>
+    </div>
+  </div>
+</template>
