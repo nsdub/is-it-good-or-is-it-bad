@@ -3,8 +3,9 @@
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
   <meta charset="utf-8">
   <title>Is It Good or Is It Bad</title>
-  <meta name="description" content="">
-  <meta name="author" content="">
+  <meta name="description" content="Play the game and find out if the Internet thinks you are Good or Bad!">
+  <!-- Need to learn about this -->
+  <meta name="author" content="www.nsdub.com">
 
   <!-- Mobile Specific Metas
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
@@ -49,11 +50,11 @@
    </section>
   {{> game}}
   <div class="links">
-    <div class="about-link">
-      <a href="/about">About</a>
+    <div class="link">
+      <a href="/what-is-this">What is this?</a>
     </div>
     {{#if currentUser}}
-      <div class="manager-link">
+      <div class="link">
         <a href="/manage">Go to Manage</a>
       </div>
     {{/if}}
@@ -177,7 +178,7 @@
       </table>
     </div>
   {{/if}}
-  <div class="manager-link">
+  <div class="link">
     <a href="/">Go Home</a>
   </div>
 </template>
@@ -286,9 +287,15 @@
   </tr>
 </template>
 
-<template name="about">
-  <h1>About page</h1>
-  <p>This is a giant about section explaining what this site is all about</p>
+<template name="what_is_this">
+  <section class="header">
+    <h1>This is art</h1>
+    <h3>Here's what it means...</h3>
+  </section>
+  <p>Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum </p>
+  <div class="link">
+    <a href="/">Go Home</a>
+  </div>
 </template>
 
 <template name="flash_messages">

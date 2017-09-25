@@ -4,7 +4,7 @@
 
 // Styles for phone
 @media (max-width: 599px) {
-  .header h2 { font-size: 4rem; }
+  .header .title { font-size: 4rem; }
   .header .title p { font-size: 1.5rem; }
   .info-container { font-size: 2rem;}
   .metrics { font-size: 1.2rem; }
@@ -16,7 +16,7 @@
 
 // Stlyes for desktop
 @media (min-width: 600px) {
-  .header h2 { font-size: 5.5rem; }
+  .header .title { font-size: 5.5rem; }
   .header .title p { font-size: 2.5rem; }
   .info-container {font-size: 2.5rem;}
   .metrics { font-size: 1.7rem; }
@@ -27,6 +27,9 @@
 
 .header {
   margin-top: 5rem;
+
+}
+.header .title {
   text-align: center;
   font-family: 'Playfair Display', serif;
   font-style: italic;
@@ -149,7 +152,7 @@
   text-align: center;
 }
 
-.about-link, .manager-link {
+.link {
   text-align: center;
 }
 
