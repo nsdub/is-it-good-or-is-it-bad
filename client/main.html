@@ -1,5 +1,4 @@
 <head>
-
   <!-- Basic Page Needs
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
   <meta charset="utf-8">
@@ -20,6 +19,15 @@
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
   <!-- <link rel="icon" type="image/png" href="images/favicon.png"> -->
 
+  <!-- Global Site Tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-106895836-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments)};
+    gtag('js', new Date());
+
+    gtag('config', 'UA-106895836-1');
+  </script>
 </head>
 
 <body>
@@ -154,7 +162,7 @@
               Morality
             </td>
             <td>
-              <!-- Intentionally blank for edit column-->
+              % Correct
             </td>
             <td>
               <!-- Intentionally blank for delete column-->
@@ -210,7 +218,8 @@
       <textarea form="edit_card_form" class="u-full-width" name="title" placeholder="Card content...">{{title}}</textarea>
     </td>
     <td>
-      <select form="edit_card_form" name="stack" value="{{stack}}">
+      <!-- <h3>{{stack}}</h3> -->
+      <select form="edit_card_form" name="stack" value={{stack}}>
         <option>Stack</option>
         <option value="1">1</option>
         <option value="2">2</option>
@@ -268,9 +277,10 @@
       {{morality}}
     </td>
     <td>
-      <button class="editItem">Edit</button>
+      {{percent_correct responded_count correct_count}}%
     </td>
     <td>
+      <button class="editItem">Edit</button>
       <button class="delete">X</button>
     </td>
   </tr>

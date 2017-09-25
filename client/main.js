@@ -4,8 +4,9 @@ import { Mongo } from 'meteor/mongo';
 import { check } from 'meteor/check';
 import { Template } from 'meteor/templating';
 import { ReactiveVar } from 'meteor/reactive-var';
+import { Cards } from '../imports/api/cards.js';
 
-Cards = new Mongo.Collection('cards');
+var timeoutLength = 2500;
 
 function createItem(event) {
   var title = event.target.title.value;
@@ -13,15 +14,8 @@ function createItem(event) {
   var order = Number(event.target.order.value);
   var morality = event.target.morality.value;
 
-  Cards.insert({
-    title: title,
-    stack: stack,
-    order: order,
-    morality: morality,
-    served_count: 0,
-    correct_count: 0,
-    createdAt: new Date(),
-  });
+  // Insert a card into the collection
+  Meteor.call('cards.insert', title, stack, order, morality);
 }
 
 function saveItem(event) {
@@ -37,7 +31,9 @@ function saveItem(event) {
     morality: morality
   }
 
-  Cards.update(Session.get('editItemId'), {$set: editItem});
+  // Update card in collection
+  Meteor.call('cards.update', Session.get('editItemId'), {$set: editItem});
+
   Session.set('editItemId', null);
 }
 
@@ -48,8 +44,6 @@ function getRandomInt(min, max) {
 function generateStackNumber() {
   Session.set('stackNumber', getRandomInt(1, 1)); // This needs to be modified to have a max value of the number of stacks present
 };
-
-var timeoutLength = 2500;
 
 function getStack(stackNumber) {
   return Cards.find({
@@ -64,47 +58,39 @@ function getCurrentCard() {
   });
 };
 
-Template.game.onCreated(function setSessionVar() {
-  Session.set('completedCards', 0);
-  generateStackNumber();
-  Session.set('stackOrder', 1);
-  Session.set('userScore', 0);
-});
-
-Template.game.helpers({
-  served: function() {
-    return getCurrentCard();
-  },
-});
+function getRandomItem(array) {
+  return array[Math.floor(Math.random() * array.length)];
+};
 
 function getFlashMessageSubtext(response) {
   var completedCards = Session.get('completedCards');
 
   if (response == "correct") {
     if (completedCards == 0) {
-      return "Finally, someone who gets it.";
+      var arr = ["Finally, someone who gets it.",]
     } else if (completedCards == 1) {
-      return "The world needs more people like you.";
+      var arr = ["The world needs more people like you.",]
     } else if (completedCards == 2) {
-      return "This. A million times this.";
+      var arr = ["This. A million times this.",]
     } else if (completedCards == 3) {
-      return "At last! Some sanity!";
+      var arr = ["At last! Some sanity!",]
     } else if (completedCards == 4) {
-      return "YAAAAASSSS!!";
+      var arr = ["YAAAAASSSS!!",]
     }
   } else if (response == "incorrect") {
     if (completedCards == 0) {
-      return "Um, how about no.";
+      var arr = ["Um, how about no.", "I'll pretend you didn't mean that."];
     } else if (completedCards == 1) {
-      return "You cannot be serious right now.";
+      var arr = ["You cannot be serious right now.", "This needs to stop."]
     } else if (completedCards == 2) {
-      return "Go back to whatever hole you crawled out of.";
+      var arr = ["Go back to whatever hole you crawled out of.", "Don't infect us with your views."];
     } else if (completedCards == 3) {
-      return "Are you deaf, dumb, blind, or all of the above?";
+      var arr = ["Are you deaf, dumb, blind, or all of the above?", "You should be ashamed of yourself."]
     } else if (completedCards == 4) {
-      return "You are literally worse than Hitler.";
+      var arr = ["You are literally worse than Hitler.", "You and Satan sure have a lot in common."]
     }
   };
+  return getRandomItem(arr);
 };
 
 function generateFlashMessage(message, thing) {
@@ -133,18 +119,33 @@ function checkResponse(val) {
 
   if(cardMorality == val && Session.get('userScore') < 6) {
     Session.set('userScore', currentScore + 1);
+    Session.set('lastPrompt', "correct");
     generateFlashMessage("RIGHT!", "correct");
   }
   else {
+    Session.set('lastPrompt', "incorrect");
     generateFlashMessage("WRONG!", "incorrect")
   }
 };
 
 function updateCardStats(event) {
-  // var stack =
-  var order = Session.get('stackOrder');
+  var current_card = Cards.findOne({
+    stack: Session.get('stackNumber'),
+    order: Session.get('stackOrder')
+  });
+  var old_responded_count = current_card.responded_count;
+  var old_correct_count = current_card.correct_count;
+  if (Session.get('lastPrompt') == "correct"){
+    var new_correct_count = old_correct_count + 1;
+  } else {
+    var new_correct_count = old_correct_count;
+  };
+  var editStats = {
+    responded_count: old_responded_count + 1,
+    correct_count: new_correct_count
+  };
 
-  console.log(event);
+  Meteor.call('cards.update_stats', current_card._id, {$set: editStats});
 };
 
 function generateResults(score) {
@@ -155,7 +156,7 @@ function generateResults(score) {
   } else if (score == 2) {
     return "Mostly BAD";
   } else if (score == 3) {
-    return "Uncertain, but likely BAD";
+    return "Ambiguously BAD";
   } else if (score == 4) {
     return "Mostly GOOD";
   } else if (score == 5) {
@@ -180,6 +181,19 @@ function renderResults(score) {
   }, 3000)
 }
 
+Template.game.onCreated(function setSessionVar() {
+  Session.set('completedCards', 0);
+  generateStackNumber();
+  Session.set('stackOrder', 1);
+  Session.set('userScore', 0);
+});
+
+Template.game.helpers({
+  served: function() {
+    return getCurrentCard();
+  },
+});
+
 Template.game.events({
   'click .response'(event, instance) {
     // See if the user got the prompt correct and increase score and show flash message
@@ -189,11 +203,11 @@ Template.game.events({
     updateCardStats(event);
 
     // Increment question count by one
-    var currentOrder = Session.get('stackOrder');
     var completedCards = Session.get('completedCards');
     Session.set('completedCards', completedCards + 1);
 
     // Move to next card
+    var currentOrder = Session.get('stackOrder');
     setTimeout(function(){
       $(".response-feedback #message").fadeOut(400);
       if(currentOrder < 5){
@@ -245,6 +259,12 @@ Template.manage.helpers({
   },
 });
 
+Template.card_view_row.helpers({
+  percent_correct: function(responded_count, correct_count) {
+    return Math.floor(responded_count / correct_count * 100);
+  }
+});
+
 Template.manage.events({
   'submit .new-card-form': function(event) {
     createItem(event);
@@ -256,7 +276,7 @@ Template.manage.events({
 Template.card.events({
   'click .delete': function(event) {
     if (confirm("You sure bruh?")) {
-      Cards.remove(this._id);
+      Meteor.call('cards.remove', this._id);
     }
   },
   'click .editItem': function(){
