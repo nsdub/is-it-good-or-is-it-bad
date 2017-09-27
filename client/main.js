@@ -309,7 +309,7 @@ Template.card.helpers({
 
 UI.registerHelper('shareOnFacebookLink', function() {
   // return 'https://www.facebook.com/sharer/sharer.php?&u=' + window.location.href;
-  return 'https://www.facebook.com/sharer/sharer.php?&u=www.nsdub.com';
+  return 'https://www.facebook.com/sharer/sharer.php?&u=is-it-good-or-is-it-bad.herokuapp.com/'; // Need to change this to real URL
 });
 
 UI.registerHelper('shareOnTwitterLink', function() {
