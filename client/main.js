@@ -42,7 +42,7 @@ function getRandomInt(min, max) {
 };
 
 function generateStackNumber() {
-  Session.set('stackNumber', getRandomInt(1, 1)); // This needs to be modified to have a max value of the number of stacks present
+  Session.set('stackNumber', getRandomInt(1, 7)); // This needs to be modified to have a max value of the number of stacks present
 };
 
 function getStack(stackNumber) {
