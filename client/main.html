@@ -14,7 +14,8 @@
   <!-- FONT
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
   <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
-  <link href="https://fonts.googleapis.com/css?family=Josefin+Slab:400,400i|Playfair+Display:400i" rel="stylesheet">
+  <!-- <link href="https://fonts.googleapis.com/css?family=Josefin+Slab:400,400i|Playfair+Display:400i" rel="stylesheet"> -->
+  <link href="https://fonts.googleapis.com/css?family=Josefin+Slab:400,400i,700,700i|Playfair+Display:400,400i,700,700i" rel="stylesheet">
 
   <!-- Favicon
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
@@ -135,7 +136,6 @@
 <template name="prompt">
   <td class="prompt">
     {{title}}
-    {{stack}}
   </td>
 </template>
 
@@ -178,8 +178,10 @@
       </table>
     </div>
   {{/if}}
-  <div class="link">
-    <a href="/">Go Home</a>
+  <div class="links">
+    <div class="link">
+      <a href="/">Go Home</a>
+    </div>
   </div>
 </template>
 
@@ -289,12 +291,46 @@
 
 <template name="what_is_this">
   <section class="header">
-    <h1>This is art</h1>
-    <h3>Here's what it means...</h3>
+    <h1>This is art.</h1>
   </section>
-  <p>Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum </p>
-  <div class="link">
-    <a href="/">Go Home</a>
+  <div class="content">
+    <div class="definition">
+      <p class="strong">
+        In·ter·net Mo·ral·i·ty
+        <br />
+        /ˈin(t)ərˌnetˌməˈralədē/
+      </p>
+      <p class="italics">
+        noun
+      </p>
+      <p class="indented">
+        crowd sourced principles concerning the differences between right and wrong developed over repeated exposure to a highly simplified reporting of events.
+      </p>
+    </div>
+    <div class="post">
+      <p>
+        Visit your favorite news source, social hub, or procrastination center, and what you’ll get is not the delivery of information, but the judgments of fragmented information.
+      </p>
+      <p>
+        This game was created to define Internet Morality and to explore the cultivation of personal morality more broadly. The hypothesis of this piece is that we communicate online to help us define our morality and thus who we are. Underlying this is a belief that morality is neither intrinsic, nor is it self-generated. Instead, it is a set of smells that we are trained to recognize through repeated positive and negative affirmations. The sharpness and abundance of this training is maximized when we’re online.
+      </p>
+      <p>
+        Our digital conversation flows from oversimplified reporting, to warped understanding, to abrasive judgment. The thing we end up discussing bears so little resemblance to the precipitating event, that we might as well be engaged in a thought experiment. These dialogs do not take place to move us closer to understanding our world or to each other. Rather, the ensuing dialog exists purely for the benefit of our own self-definition. As a way of affirming our morals, which need to be affirmed because they are not our own, we pass continual judgment on our bite sized understanding of other's actions.
+      </p>
+      <p>
+        The problem with a morality constructed in this way is that at best it becomes a simulacrum of actual morals. So that when we are presented with real problems with real implications, we stumble. Imagine taking a person who learned to play football by playing Madden. That person may know enough to talk a big game, but you sure as hell wouldn’t want them on your team.
+      </p>
+      <p>
+        With respect to the judgments of the prompts in the game, they are meant to be emblematic of the corner of the internet on which I trespass.<sup>1</sup> I hope they make you smirk, but don’t take them too seriously. They exist to highlight their own absurdity.
+      </p>
+      <hr />
+      <sup id="fn1">1. This corner could be defined as “insular internet liberalism.” It’s a place where opinions are formed and promoted by people who don’t get out much. We grew up in the suburbs and went to good schools where we were imbued with shame and skepticism of our born advantages.</sup>
+    </div>
+  </div>
+  <div class="links">
+    <div class="link">
+      <a href="/">Go Home</a>
+    </div>
   </div>
 </template>
 

@@ -6,7 +6,7 @@ import { Template } from 'meteor/templating';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { Cards } from '../imports/api/cards.js';
 
-var timeoutLength = 2500;
+var timeoutLength = 25;
 
 function createItem(event) {
   var title = event.target.title.value;
@@ -69,7 +69,7 @@ function getFlashMessageSubtext(response) {
     if (completedCards == 0) {
       var arr = ["Finally, someone who gets it.",]
     } else if (completedCards == 1) {
-      var arr = ["The world needs more people like you.",]
+      var arr = ["The world needs more people like you.", "Faith in humanity restored."]
     } else if (completedCards == 2) {
       var arr = ["This. A million times this.",]
     } else if (completedCards == 3) {
@@ -79,7 +79,7 @@ function getFlashMessageSubtext(response) {
     }
   } else if (response == "incorrect") {
     if (completedCards == 0) {
-      var arr = ["Um, how about no.", "I'll pretend you didn't mean that."];
+      var arr = ["Um, how about no.", "Let's pretend you didn't mean that."];
     } else if (completedCards == 1) {
       var arr = ["You cannot be serious right now.", "This needs to stop."]
     } else if (completedCards == 2) {
@@ -181,6 +181,14 @@ function renderResults(score) {
   }, 3000)
 }
 
+function fadeInContent() {
+  $(".container").fadeIn(1000);
+};
+
+Template.main_layout.onRendered(function() {
+  fadeInContent();
+});
+
 Template.game.onCreated(function setSessionVar() {
   Session.set('completedCards', 0);
   generateStackNumber();
@@ -235,6 +243,8 @@ Template.game.events({
     $(".results").hide();
     $(".social-buttons").hide();
     $(".morality-buttons .response").show();
+    $(".container").hide();
+    fadeInContent();
   },
 
   // Remove overlay if someone clicks on it before timeout.
