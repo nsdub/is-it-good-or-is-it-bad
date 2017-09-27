@@ -6,7 +6,7 @@ import { Template } from 'meteor/templating';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { Cards } from '../imports/api/cards.js';
 
-var timeoutLength = 25;
+var timeoutLength = 2500;
 
 function createItem(event) {
   var title = event.target.title.value;
