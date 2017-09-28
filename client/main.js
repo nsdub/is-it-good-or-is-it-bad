@@ -182,7 +182,7 @@ function renderResults(score) {
     setTimeout(function(){
       $(".social-buttons").fadeTo(1000, 1);
     }, 2000)
-  }, 3000)
+  }, 2500)
 }
 
 function fadeInContent() {
