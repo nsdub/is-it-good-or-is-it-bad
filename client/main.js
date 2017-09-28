@@ -1,10 +1,10 @@
-import '../imports/startup/accounts-config.js';
-import { Meteor } from 'meteor/meteor';
-import { Mongo } from 'meteor/mongo';
-import { check } from 'meteor/check';
-import { Template } from 'meteor/templating';
-import { ReactiveVar } from 'meteor/reactive-var';
-import { Cards } from '../imports/api/cards.js';
+import "../imports/startup/accounts-config.js";
+import { Meteor } from "meteor/meteor";
+import { Mongo } from "meteor/mongo";
+import { check } from "meteor/check";
+import { Template } from "meteor/templating";
+import { ReactiveVar } from "meteor/reactive-var";
+import { Cards } from "../imports/api/cards.js";
 
 var timeoutLength = 2500;
 
@@ -15,7 +15,7 @@ function createItem(event) {
   var morality = event.target.morality.value;
 
   // Insert a card into the collection
-  Meteor.call('cards.insert', title, stack, order, morality);
+  Meteor.call("cards.insert", title, stack, order, morality);
 }
 
 function saveItem(event) {
@@ -32,9 +32,9 @@ function saveItem(event) {
   }
 
   // Update card in collection
-  Meteor.call('cards.update', Session.get('editItemId'), {$set: editItem});
+  Meteor.call("cards.update", Session.get("editItemId"), {$set: editItem});
 
-  Session.set('editItemId', null);
+  Session.set("editItemId", null);
 }
 
 function getRandomInt(min, max) {
@@ -43,9 +43,9 @@ function getRandomInt(min, max) {
 
 function generateStackNumber() {
   if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
-    Session.set('stackNumber', 1); // Makes testing on local easier
+    Session.set("stackNumber", 1); // Makes testing on local easier
   } else {
-    Session.set('stackNumber', getRandomInt(1, 7)); // This needs to be modified to have a max value of the number of stacks present
+    Session.set("stackNumber", getRandomInt(1, 7)); // This needs to be modified to have a max value of the number of stacks present
   }
 };
 
@@ -57,8 +57,8 @@ function getStack(stackNumber) {
 
 function getCurrentCard() {
   return Cards.find({
-    stack: Session.get('stackNumber'),
-    order: Session.get('stackOrder')
+    stack: Session.get("stackNumber"),
+    order: Session.get("stackOrder")
   });
 };
 
@@ -67,7 +67,7 @@ function getRandomItem(array) {
 };
 
 function getFlashMessageSubtext(response) {
-  var completedCards = Session.get('completedCards');
+  var completedCards = Session.get("completedCards");
 
   if (response == "correct") {
     if (completedCards == 0) {
@@ -114,32 +114,32 @@ function clearFlashMessages() {
 };
 
 function checkResponse(val) {
-  var currentScore = Session.get('userScore');
+  var currentScore = Session.get("userScore");
   var cardMorality = getCurrentCard().fetch().map(function(card) {
     return card.morality;
   });
 
   clearFlashMessages();
 
-  if(cardMorality == val && Session.get('userScore') < 6) {
-    Session.set('userScore', currentScore + 1);
-    Session.set('lastPrompt', "correct");
+  if(cardMorality == val && Session.get("userScore") < 6) {
+    Session.set("userScore", currentScore + 1);
+    Session.set("lastPrompt", "correct");
     generateFlashMessage("RIGHT!", "correct");
   }
   else {
-    Session.set('lastPrompt', "incorrect");
+    Session.set("lastPrompt", "incorrect");
     generateFlashMessage("WRONG!", "incorrect")
   }
 };
 
 function updateCardStats(event) {
   var current_card = Cards.findOne({
-    stack: Session.get('stackNumber'),
-    order: Session.get('stackOrder')
+    stack: Session.get("stackNumber"),
+    order: Session.get("stackOrder")
   });
   var old_responded_count = current_card.responded_count;
   var old_correct_count = current_card.correct_count;
-  if (Session.get('lastPrompt') == "correct"){
+  if (Session.get("lastPrompt") == "correct"){
     var new_correct_count = old_correct_count + 1;
   } else {
     var new_correct_count = old_correct_count;
@@ -149,7 +149,7 @@ function updateCardStats(event) {
     correct_count: new_correct_count
   };
 
-  Meteor.call('cards.update_stats', current_card._id, {$set: editStats});
+  Meteor.call("cards.update_stats", current_card._id, {$set: editStats});
 };
 
 function generateResults(score) {
@@ -194,10 +194,10 @@ Template.main_layout.onRendered(function() {
 });
 
 Template.game.onCreated(function setSessionVar() {
-  Session.set('completedCards', 0);
+  Session.set("completedCards", 0);
   generateStackNumber();
-  Session.set('stackOrder', 1);
-  Session.set('userScore', 0);
+  Session.set("stackOrder", 1);
+  Session.set("userScore", 0);
 });
 
 Template.game.helpers({
@@ -207,7 +207,7 @@ Template.game.helpers({
 });
 
 Template.game.events({
-  'click .response'(event, instance) {
+  "click .response"(event, instance) {
     // See if the user got the prompt correct and increase score and show flash message
     checkResponse(event.target.value);
 
@@ -215,33 +215,33 @@ Template.game.events({
     updateCardStats(event);
 
     // Increment question count by one
-    var completedCards = Session.get('completedCards');
-    Session.set('completedCards', completedCards + 1);
+    var completedCards = Session.get("completedCards");
+    Session.set("completedCards", completedCards + 1);
 
     // Move to next card
-    var currentOrder = Session.get('stackOrder');
+    var currentOrder = Session.get("stackOrder");
     setTimeout(function(){
       $(".response-feedback #message").fadeOut(400);
       if(currentOrder < 5){
-        Session.set('stackOrder', currentOrder + 1);
-        Session.set('completedCards', completedCards + 1);
+        Session.set("stackOrder", currentOrder + 1);
+        Session.set("completedCards", completedCards + 1);
       };
 
-      if(Session.get('completedCards') == 5) {
+      if(Session.get("completedCards") == 5) {
         $(".morality-buttons .response").hide();
         $(".reset-button").show();
-        renderResults(Session.get('userScore'));
+        renderResults(Session.get("userScore"));
       }
     }, timeoutLength)
 
     return event.preventDefault();
   },
 
-  'click .reset'(event, instance) {
-    Session.set('userScore', 0);
-    Session.set('completedCards', 0);
+  "click .reset"(event, instance) {
+    Session.set("userScore", 0);
+    Session.set("completedCards", 0);
     generateStackNumber();
-    Session.set('stackOrder', 1);
+    Session.set("stackOrder", 1);
     clearFlashMessages();
     $(".reset-button").hide();
     $(".results").hide();
@@ -252,18 +252,18 @@ Template.game.events({
   },
 
   // Remove overlay if someone clicks on it before timeout.
-  // 'click #overlay'(event, instance){
-  //   $('#overlay').fadeOut(200);
+  // "click #overlay"(event, instance){
+  //   $("#overlay").fadeOut(200);
   // },
 });
 
 Template.metrics.helpers({
   score() {
-    return Session.get('userScore');
+    return Session.get("userScore");
   },
 
   counter() {
-    return Session.get('stackOrder');
+    return Session.get("stackOrder");
   },
 });
 
@@ -280,7 +280,7 @@ Template.card_view_row.helpers({
 });
 
 Template.manage.events({
-  'submit .new-card-form': function(event) {
+  "submit .new-card-form": function(event) {
     createItem(event);
     event.currentTarget.reset();
     return event.preventDefault();
@@ -288,18 +288,18 @@ Template.manage.events({
 });
 
 Template.card.events({
-  'click .delete': function(event) {
+  "click .delete": function(event) {
     if (confirm("You sure bruh?")) {
-      Meteor.call('cards.remove', this._id);
+      Meteor.call("cards.remove", this._id);
     }
   },
-  'click .editItem': function(){
-    Session.set('editItemId', this._id);
+  "click .editItem": function(){
+    Session.set("editItemId", this._id);
   },
-  'click .cancelItem': function(){
-    Session.set('editItemId', null);
+  "click .cancelItem": function(){
+    Session.set("editItemId", null);
   },
-  'submit .edit-card-form': function(event){
+  "submit .edit-card-form": function(event){
     saveItem(event);
     return event.preventDefault();
   }
@@ -307,19 +307,22 @@ Template.card.events({
 
 Template.card.helpers({
   editing: function() {
-    return Session.equals('editItemId', this._id);
+    return Session.equals("editItemId", this._id);
   },
 });
 
-UI.registerHelper('shareOnFacebookLink', function() {
-  // return 'https://www.facebook.com/sharer/sharer.php?&u=' + window.location.href;
-  return 'https://www.facebook.com/sharer/sharer.php?&u=is-it-good-or-is-it-bad.herokuapp.com/'; // Need to change this to real URL
+Handlebars.registerHelper("setIMTitle", function() {
+  document.title = "Internet Morality: Is It Good or Is It Bad";
 });
 
-UI.registerHelper('shareOnTwitterLink', function() {
-  return 'https://twitter.com/intent/tweet?url=' + window.location.href + '&text=' + document.title;
+UI.registerHelper("shareOnFacebookLink", function() {
+  return "https://www.facebook.com/sharer/sharer.php?&u=www.isitgoodorisitbad.com/";
 });
 
-UI.registerHelper('shareOnGooglePlusLink', function() {
-  return 'https://plus.google.com/share?url=' + window.location.href;<br />
+UI.registerHelper("shareOnTwitterLink", function() {
+  return "https://twitter.com/intent/tweet?url=" + window.location.href + "&text=" + document.title;
+});
+
+UI.registerHelper("shareOnGooglePlusLink", function() {
+  return "https://plus.google.com/share?url=" + window.location.href;<br />
 });
