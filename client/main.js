@@ -42,7 +42,11 @@ function getRandomInt(min, max) {
 };
 
 function generateStackNumber() {
-  Session.set('stackNumber', getRandomInt(1, 7)); // This needs to be modified to have a max value of the number of stacks present
+  if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
+    Session.set('stackNumber', 1); // Makes testing on local easier
+  } else {
+    Session.set('stackNumber', getRandomInt(1, 7)); // This needs to be modified to have a max value of the number of stacks present
+  }
 };
 
 function getStack(stackNumber) {
