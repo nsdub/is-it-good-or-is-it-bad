@@ -71,15 +71,15 @@ function getFlashMessageSubtext(response) {
 
   if (response == "correct") {
     if (completedCards == 0) {
-      var arr = ["Finally, someone who gets it.",]
+      var arr = ["Finally, someone who gets it.", "You. You are a good person."]
     } else if (completedCards == 1) {
       var arr = ["The world needs more people like you.", "Faith in humanity restored."]
     } else if (completedCards == 2) {
-      var arr = ["This. A million times this.",]
+      var arr = ["This. A million times this.", "Nailed it."]
     } else if (completedCards == 3) {
-      var arr = ["At last! Some sanity!",]
+      var arr = ["At last! Some sanity!", "You're truly a voice of reason."]
     } else if (completedCards == 4) {
-      var arr = ["YAAAAASSSS!!",]
+      var arr = ["YAAAAASSSS!!", "Have you considered running for office?"]
     }
   } else if (response == "incorrect") {
     if (completedCards == 0) {
@@ -182,7 +182,7 @@ function renderResults(score) {
     setTimeout(function(){
       $(".social-buttons").fadeTo(1000, 1);
     }, 2000)
-  }, 2500)
+  }, 2000)
 }
 
 function fadeInContent() {
@@ -243,9 +243,8 @@ Template.game.events({
     generateStackNumber();
     Session.set("stackOrder", 1);
     clearFlashMessages();
-    $(".reset-button").hide();
-    $(".results").hide();
-    $(".social-buttons").hide();
+    $(".reset-button, .results").hide();
+    $(".results h4, .results #judgment, .social-buttons").css("opacity", "0");
     $(".morality-buttons .response").show();
     $(".container").hide();
     fadeInContent();
@@ -275,7 +274,7 @@ Template.manage.helpers({
 
 Template.card_view_row.helpers({
   percent_correct: function(responded_count, correct_count) {
-    return Math.floor(responded_count / correct_count * 100);
+    return Math.floor(correct_count / responded_count * 100);
   }
 });
 
@@ -326,3 +325,6 @@ UI.registerHelper("shareOnTwitterLink", function() {
 UI.registerHelper("shareOnGooglePlusLink", function() {
   return "https://plus.google.com/share?url=" + window.location.href;<br />
 });
+
+// Autoscoll package config
+RouterAutoscroll.animationDuration = 0;
